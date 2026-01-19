@@ -1,19 +1,14 @@
 terraform {
-  required_version = ">= 1.5.0"
-
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 3.7.0"  # major
+      version = ">= 3.7.0"
     }
   }
 }
-
 provider "azurerm" {
   features {}
 }
-
-
 
 
 # Create a resource group

@@ -10,8 +10,8 @@ provider "azurerm" {
   features {}
 #ARM_CLIENT_ID = ${{ secrets.AZURE_AD_CLIENT_ID }}
 #ARM_CLIENT_SECRET = ${{ secrets.AZURE_AD_CLIENT_SECRET }}
-ARM_SUBSCRIPTION_ID = ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-ARM_TENANT_ID = ${{ secrets.AZURE_AD_TENANT_ID }}
+subscription_id = ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+tenant_id = ${{ secrets.AZURE_AD_TENANT_ID }}
 }
 
 

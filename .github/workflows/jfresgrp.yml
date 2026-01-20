@@ -37,12 +37,14 @@ jobs:
           ARCH="$(uname -m)"
           if [[ "$ARCH" == "x86_64" ]]; then OS_ARCH="linux_amd64"; elif [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]]; then OS_ARCH="linux_arm64"; else echo "Unsupported arch: $ARCH"; exit 1; fi
           PLUGIN_ROOT="$HOME/.terraform.d/plugins/registry.terraform.io/jfrog/artifactory/${VERSION}/${OS_ARCH}"
-          ZIP=".terraform-backend-artifactory_${VERSION}_${OS_ARCH}.zip"
-          ZIP1=".terraform-backend-artifactory_${VERSION}_${OS_ARCH}"
+          echo "plugin root ${PLUGIN_ROOT}"
+          ZIP="terraform-backend-artifactory_${VERSION}_${OS_ARCH}.zip"
+          ZIP1="terraform-backend-artifactory_${VERSION}_${OS_ARCH}"
           URL="https://github.com/jfrog/terraform-backend-artifactory/releases/download/v${VERSION}/${ZIP}"
           sudo apt-get update && sudo apt-get install -y curl unzip
           mkdir -p "${PLUGIN_ROOT}"
           TMP_DIR="$(mktemp -d)"
+          echo "temp_dir to ${TMP_DIR}"
           curl -L -o "${TMP_DIR}/${ZIP}" "${URL}"
           unzip -o "${TMP_DIR}/${ZIP1}" -d "${PLUGIN_ROOT}" >/dev/null
           if [[ -f "${PLUGIN_ROOT}/${ZIP1}" ]]; then

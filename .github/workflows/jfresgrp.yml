@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  terraform:
+  jfterraform:
     name: 'jfterraform'
     env:
       ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
@@ -16,7 +16,7 @@ jobs:
       ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
       JFROG_URL: ${{ secrets.JFROG_URL }}
       JFROG_ACCESS_TOKEN: ${{ secrets.JFROG_ACCESS_TOKEN }}
-
+      ARTIFACTORY_BACKEND_VERSION: "1.0.4"
     runs-on: ubuntu-latest
     environment: dev
 
@@ -27,6 +27,32 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+
+    
+    - name: Install Artifactory backend plugin (inline)
+      shell: bash
+      run: |
+          set -euo pipefail
+          VERSION="${ARTIFACTORY_BACKEND_VERSION}"
+          ARCH="$(uname -m)"
+          if [[ "$ARCH" == "x86_64" ]]; then OS_ARCH="linux_amd64"; elif [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]]; then OS_ARCH="linux_arm64"; else echo "Unsupported arch: $ARCH"; exit 1; fi
+          PLUGIN_ROOT="$HOME/.terraform.d/plugins/registry.terraform.io/jfrog/artifactory/${VERSION}/${OS_ARCH}"
+          ZIP="terraform-backend-artifactory_${VERSION}_${OS_ARCH}.zip"
+          URL="https://github.com/jfrog/terraform-backend-artifactory/releases/download/v${VERSION}/${ZIP}"
+          sudo apt-get update && sudo apt-get install -y curl unzip
+          mkdir -p "${PLUGIN_ROOT}"
+          TMP_DIR="$(mktemp -d)"
+          curl -L -o "${TMP_DIR}/${ZIP}" "${URL}"
+          unzip -o "${TMP_DIR}/${ZIP}" -d "${PLUGIN_ROOT}" >/dev/null
+          if [[ -f "${PLUGIN_ROOT}/terraform-backend-artifactory" ]]; then
+            chmod +x "${PLUGIN_ROOT}/terraform-backend-artifactory"
+          else
+            CANDIDATE=$(find "${PLUGIN_ROOT}" -maxdepth 1 -type f -perm -u+x | head -n 1)
+            mv "$CANDIDATE" "${PLUGIN_ROOT}/terraform-backend-artifactory"
+            chmod +x "${PLUGIN_ROOT}/terraform-backend-artifactory"
+          fi
+          rm -rf "${TMP_DIR}"
+          echo "Installed to ${PLUGIN_ROOT}"
 
     - name: 'Terraform Format'
       uses: hashicorp/terraform-github-actions@master

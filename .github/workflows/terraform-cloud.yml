@@ -9,10 +9,16 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+
     env:
       TF_IN_AUTOMATION: true
-      # Terraform Cloud supports token environment variables
+      # Correct: must NOT be empty
       TFE_TOKEN_app_terraform_io: ${{ secrets.TFC_TOKEN }}
+
+    defaults:
+      run:
+        # Correct working directory
+        working-directory: terraformCloud
 
     steps:
       - name: Checkout
@@ -21,11 +27,10 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.14.3
-          
+          terraform_version: 1.8.5
 
-      # Optional way to write credentials.tfrc.json manually
-      - name: Write Terraform Cloud credentials
+      # (Optional but recommended)
+      - name: Configure Terraform Cloud credentials
         run: |
           mkdir -p ~/.terraform.d
           cat > ~/.terraform.d/credentials.tfrc.json <<EOF
@@ -38,14 +43,6 @@ jobs:
           }
           EOF
 
-      - name: 'Terraform Format'
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: 1.14.3
-          tf_actions_subcommand: 'fmt'
-          tf_actions_working_dir: "./terraformCloud"
-          
-      
       - name: Terraform Init
         run: terraform init -input=false
 
@@ -54,4 +51,4 @@ jobs:
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
-        run: terraform apply -input=false -auto-approve tfplan     
+        run: terraform apply -input=false -auto-approve tfplan

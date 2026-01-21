@@ -28,7 +28,7 @@ jobs:
         with:
           terraform_version: 1.8.5
           cli_config_credentials_hostname: trialpf4dwg.jfrog.io
-          cli_config_credentials_token: ${{ secrets.JFROG_ACCESS_TOKEN }}
+          cli_config_credentials_token: ${{ secrets.JFROG_TF_TOKEN }}
 
       - name: Terraform Init
         run: terraform init # -input=false

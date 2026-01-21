@@ -31,7 +31,7 @@ jobs:
           cli_config_credentials_token: ${{ secrets.JFROG_ACCESS_TOKEN }}
 
       - name: Terraform Init
-        run: terraform init -input=false
+        run: terraform init # -input=false
 
       - name: Terraform Plan
         run: terraform plan -input=false -out=tfplan

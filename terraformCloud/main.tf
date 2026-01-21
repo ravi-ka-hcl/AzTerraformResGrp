@@ -5,7 +5,7 @@ terraform {
     organization = "myvcpDemo"
 
     workspaces {
-      name = "production"
+      name = "AzTerraformResGrp"
     }
   }
 }

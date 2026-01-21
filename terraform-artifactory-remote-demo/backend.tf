@@ -8,7 +8,7 @@ terraform {
     hostname     = "trialpf4dwg.jfrog.io"
 
     # The Artifactory Terraform Backend repository key
-    organization = "tf-backend"
+    organization = "tempstroage-generic-local"
 
     # Choose one option:
     # A) Use a single, explicit workspace
